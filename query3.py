@@ -4,7 +4,7 @@ conn = sqlite3.connect("library.db")
 cursor = conn.cursor()
 
 cursor.execute("""
-SELECT b.id, b.title, b.my_rating, b.shelves FROM books_staging b
+SELECT * FROM books_staging b
            
          
 """)
