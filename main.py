@@ -5,7 +5,7 @@ from datetime import datetime
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 filename = f"library_{timestamp}.csv"
 url = "https://lubimyczytac.pl/ksiegozbior/2glQPseQzbb"
-num_pages = 2
+num_pages = 74
 driver_path = "/opt/homebrew/bin/chromedriver"
 half_stars = False # for sites like Storygraph that accept half stars 
 
