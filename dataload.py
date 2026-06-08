@@ -22,7 +22,7 @@ class Book(Base):
     __tablename__ = "books"
 
     id = Column(Integer, primary_key=True)
-    staging_id = Column(Integer, unique=True)  # 🔥 KLUCZ IDEMPOTENCYJNY
+  #  staging_id = Column(Integer, unique=True)  # 🔥 KLUCZ IDEMPOTENCYJNY
     title = Column(String)
     author = Column(String)
     isbn = Column(String)
@@ -89,24 +89,40 @@ def load_csv_to_staging(path):
     session.commit()
 
 def build_relationships():
-    session.query(BookShelf).delete() 
+    session.query(BookShelf).delete(
+        synchronize_session=False
+    )
+    session.commit()
 
     staging_rows = session.query(BookStaging).all()
 
     for r in staging_rows:
 
-        book = session.query(Book).filter_by(staging_id=r.id).first()
+        book = find_existing_book(r)
         if not book or not r.shelves:
             continue
 
-        for s in set(r.shelves.split(",")):  # dedupe inline
-            shelf = session.query(Shelf).filter_by(name=s.strip()).first()
+        normalized_shelves = {
+            s.strip().lower()
+            for s in r.shelves.split(",")
+            if s.strip()
+        }
+
+        for shelf_name in normalized_shelves: # dedupe inline
+            shelf = session.query(Shelf).filter_by(name=shelf_name).first()
 
             if shelf:
-                session.add(BookShelf(
+
+                exists = session.query(BookShelf).filter_by(
                     book_id=book.id,
                     shelf_id=shelf.id
-                ))
+                ).first()
+
+                if not exists:
+                    session.add(BookShelf(
+                        book_id=book.id,
+                        shelf_id=shelf.id
+                    ))
 
     session.commit()
 
@@ -120,7 +136,7 @@ def extract_shelves():
             continue
 
         for s in shelves.split(","):
-            name = s.strip()
+            name = s.strip().lower()
 
             if name and name not in seen:
                 seen.add(name)
@@ -137,7 +153,7 @@ def load_books():
     for r in staging_rows:
 
         # optional: dedupe po ISBN
-        existing = session.query(Book).filter_by(staging_id=r.id).first()
+        existing = find_existing_book(r)
         if existing:
                  # 🔥 update (idempotency)
             existing.title = r.title
@@ -156,7 +172,7 @@ def load_books():
             except ValueError:
                 rating = None   
         book = Book(
-            staging_id=r.id,
+            #staging_id=r.id,
             title=r.title,
             author=r.author,
             isbn=r.isbn,
@@ -168,6 +184,18 @@ def load_books():
         session.add(book)
 
     session.commit()
+
+def find_existing_book(r):
+
+    if r.isbn and r.isbn.strip():
+        return session.query(Book).filter_by(
+            isbn=r.isbn
+        ).first()
+
+    return session.query(Book).filter_by(
+        title=r.title,
+        author=r.author
+    ).first()
 
 def run_pipeline():
     load_csv_to_staging(get_latest_csv())
