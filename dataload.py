@@ -45,7 +45,9 @@ class BookShelf(Base):
     shelf_id = Column(Integer, ForeignKey("shelves.id"), primary_key=True)
 
 
-engine = create_engine("sqlite:///library.db")
+engine = create_engine(
+    "postgresql+psycopg2://librarian:librarian123@localhost:5432/library"
+)
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
@@ -174,5 +176,4 @@ def run_pipeline():
     build_relationships()
 
 
-if __name__ == "__main__":
-    run_pipeline()
+run_pipeline()
