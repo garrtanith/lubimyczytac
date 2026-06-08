@@ -9,11 +9,9 @@ class BookStaging(Base):
     __tablename__ = "books_staging"
 
     id = Column(Integer, primary_key=True)
-
     title = Column(String)
     author = Column(String)
     isbn = Column(String)
-
     my_rating = Column(String)
     date_read = Column(String)
     shelves = Column(String)
@@ -29,14 +27,11 @@ class Book(Base):
     my_rating = Column(Float)
     date_read = Column(String)
 
-
-
 class Shelf(Base):
     __tablename__ = "shelves"
 
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
-
 
 class BookShelf(Base):
     __tablename__ = "book_shelves"
