@@ -203,5 +203,5 @@ def run_pipeline():
     extract_shelves()
     build_relationships()
 
-
-run_pipeline()
+if __name__ == "__main__":
+    run_pipeline()
