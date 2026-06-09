@@ -11,10 +11,10 @@ class BookStaging(Base):
     title = Column(String)
     author = Column(String)
     isbn = Column(String)
-
     my_rating = Column(String)
     date_read = Column(String)
     shelves = Column(String)
+    load_batch = Column(String)
 
 class Book(Base):
     __tablename__ = "books"

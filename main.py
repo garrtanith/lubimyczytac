@@ -1,13 +1,13 @@
 from get_library import get_library
 #from goodreads_formatter import transform_goodreads_format
 from datetime import datetime
-from dataload import run_pipeline  
+#from dataload import run_pipeline  
 
 
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 filename = f"library_{timestamp}.csv"
 url = "https://lubimyczytac.pl/ksiegozbior/2glQPseQzbb"
-num_pages = 74
+num_pages = 1
 driver_path = "/opt/homebrew/bin/chromedriver"
 half_stars = False # for sites like Storygraph that accept half stars 
 
@@ -19,6 +19,3 @@ print(f"Done! Saved to {filename}")
 #gr_df = transform_goodreads_format(df, half_stars)
 #gr_df.to_csv("gr_library.csv", index=False)
 #print("Done! Saved to gr_library.csv")
-
-if __name__ == "__main__":
-    run_pipeline()

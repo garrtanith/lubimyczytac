@@ -2,24 +2,27 @@ from models.models import BookStaging, Shelf, BookShelf
 from services.matching import find_existing_book
 from database.connection import Session
 
+STATUS_SHELVES = {
+    "przeczytane",
+    "chcę przeczytać",
+    "teraz czytam"
+}
+
+
 def normalize_shelf_name(name):
     return name.strip().lower()
 
-def build_relationships():
+def build_relationships(batch_id):
 
     session = Session()
 
     try:
 
-        session.query(BookShelf).delete(
-            synchronize_session=False
-        )
-
-        session.commit()
-
         seen_relationships = set()
 
-        staging_rows = session.query(BookStaging).all()
+        staging_rows = session.query(BookStaging).filter_by(
+            load_batch=batch_id
+        ).all()
 
         for r in staging_rows:
 
@@ -43,16 +46,32 @@ def build_relationships():
                 if not shelf:
                     continue
 
-                key = (book.id, shelf.id)
+                if shelf_name in STATUS_SHELVES:
 
-                if key not in seen_relationships:
+                    current_status_relationships = (
+                        session.query(BookShelf)
+                        .join(Shelf)
+                        .filter(
+                            BookShelf.book_id == book.id,
+                            Shelf.name.in_(STATUS_SHELVES)
+                        )
+                        .all()
+                    )
 
-                    seen_relationships.add(key)
+                    for rel in current_status_relationships:
+                        session.delete(rel)
 
-                    session.add(BookShelf(
+                exists = session.query(BookShelf).filter_by(
                         book_id=book.id,
                         shelf_id=shelf.id
-                    ))
+                ).first()
+
+                if not exists:
+
+                        session.add(BookShelf(
+                            book_id=book.id,
+                            shelf_id=shelf.id
+                        ))
 
         session.commit()
 
@@ -63,22 +82,23 @@ def build_relationships():
     finally:
         session.close()
 
-def extract_shelves():
+def extract_shelves(batch_id):
 
     session = Session()
 
     try:
 
-        rows = session.query(BookStaging.shelves).all()
-
+        rows = session.query(BookStaging).filter_by(
+            load_batch=batch_id
+        ).all()
         seen = set()
 
-        for (shelves,) in rows:
+        for row in rows:
 
-            if not shelves:
+            if not row.shelves:
                 continue
 
-            for s in shelves.split(","):
+            for s in row.shelves.split(","):
 
                 name = normalize_shelf_name(s)
 

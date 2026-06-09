@@ -2,13 +2,15 @@ from services.matching import find_existing_book
 from models.models import BookStaging, Book
 from database.connection import Session
 
-def load_books():
+def load_books(batch_id):
 
     session = Session()
 
     try:    
 
-        staging_rows = session.query(BookStaging).all()
+        staging_rows = session.query(BookStaging).filter_by(
+            load_batch=batch_id
+        ).all()
 
         for r in staging_rows:
 
