@@ -19,7 +19,7 @@ def get_latest_csv(folder="."):
     return max(files, key=lambda f: f.name)
 
 def load_csv_to_staging(path):
-    print("🚀 START LOAD CSV")
+    print(f"🚀 START LOAD CSV from {path}")
     #session.query(BookStaging).delete()  # 🔥 FULL REFRESH STAGING
     rows = []
 
@@ -43,6 +43,3 @@ def load_csv_to_staging(path):
     session.bulk_save_objects(rows)
     session.commit()
     return batch_id
-
-def extract():
-    load_csv_to_staging(get_latest_csv())

@@ -7,7 +7,7 @@ from datetime import datetime
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 filename = f"library_{timestamp}.csv"
 url = "https://lubimyczytac.pl/ksiegozbior/2glQPseQzbb"
-num_pages = 1
+num_pages = int(input("How many pages to scrape? "))
 driver_path = "/opt/homebrew/bin/chromedriver"
 half_stars = False # for sites like Storygraph that accept half stars 
 
