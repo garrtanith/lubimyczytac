@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ed98a275-bb75-4d4a-90b6-65ecfe50e961}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>main_ETL.py</StartupFile>
+    <SearchPath>database\;models\;pipeline\;services\</SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId>Global|PythonCore|3.14</InterpreterId>
+    <IsWindowsApplication>False</IsWindowsApplication>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="debug.html" />
+    <Content Include="requirements.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="database\connection.py" />
+    <Compile Include="database\__init__.py" />
+    <Compile Include="dataload.py" />
+    <Compile Include="get_library.py" />
+    <Compile Include="goodreads_formatter.py" />
+    <Compile Include="main.py" />
+    <Compile Include="main_ETL.py" />
+    <Compile Include="models\models.py" />
+    <Compile Include="models\__init__.py" />
+    <Compile Include="my_get_library.py" />
+    <Compile Include="pipeline\extract.py" />
+    <Compile Include="pipeline\load.py" />
+    <Compile Include="pipeline\transform.py" />
+    <Compile Include="pipeline\__init__.py" />
+    <Compile Include="query.py" />
+    <Compile Include="query2.py" />
+    <Compile Include="query3.py" />
+    <Compile Include="services\matching.py" />
+    <Compile Include="services\__init__.py" />
+    <Compile Include="test.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="database" />
+    <Folder Include="models" />
+    <Folder Include="pipeline" />
+    <Folder Include="services" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|Astral|CPython3.14.5" />
+    <InterpreterReference Include="Global|PythonCore|3.14" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>
